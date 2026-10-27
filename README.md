@@ -9,7 +9,7 @@ Recover cancelled appliance-service appointments through a conversation: SES ema
 - Deployed on AWS, `us-east-1`, stack `slotrescue-demo`.
 - Real SES offer and confirmation accepted by AWS during an end-to-end HTTP test. See [evidence](docs/live-evidence.json). Acceptance is not inbox delivery.
 - Twenty-two local workflow and AI/AWS adapter contract tests pass; JavaScript syntax checked; deployed page visually inspected. Adapter tests use fake responses and do not prove live model inference.
-- **AI is currently rehearsal mode.** Bedrock is account-blocked. An OpenAI GPT-4.1 mini replacement is implemented and tested with mock responses, pending the owner saving the API key and a live deployment test. See [OpenAI activation](docs/OPENAI-SETUP.md). No successful model inference is claimed yet.
+- **Live AI verified:** OpenAI GPT-4.1 mini is active on the deployed AWS application. Real inference preserved prior constraints, declined an impossible window, and selected the correct slot after a changed preference. The complete loop booked the slot and obtained SES acceptance IDs for both emails. See [live AI evidence](docs/openai-live-evidence.json). Bedrock remains an optional, account-blocked adapter.
 - Booking changes a demo service ledger, not an external dispatch system. Customer replies arrive through the secure web page, not inbound email.
 - Corrected ACE opportunity O30450854 is created with the required campaign and a verified USD 5/month estimate. Its review status is Pending Submission. Partner eligibility details, published repository, and public demo video remain submission gates; see [submission checklist](docs/SUBMISSION.md).
 
@@ -32,7 +32,7 @@ The deployed operator key is in `.private/operator-key.txt` on the build machine
 
 ## Deploy to your AWS account
 
-Prerequisites: AWS CLI credentials with CloudFormation/IAM/Lambda/API Gateway/DynamoDB/Logs access; verified SES sender and recipient in the SAME region. SES sandbox is sufficient for a controlled test. For Bedrock, model access must work in the account first. Lambda supplies boto3; no dependency download is needed for this template.
+Prerequisites: AWS CLI credentials with CloudFormation/IAM/Lambda/API Gateway/DynamoDB/Logs access; verified SES sender and recipient in the SAME region. SES sandbox is sufficient for a controlled test. For OpenAI, store a funded API key as described in [OpenAI setup](docs/OPENAI-SETUP.md). Lambda supplies boto3; no dependency download is needed for this template.
 
 ```powershell
 python scripts/build_template.py
@@ -44,9 +44,9 @@ aws cloudformation wait stack-create-complete --stack-name slotrescue-demo --reg
 aws cloudformation describe-stacks --stack-name slotrescue-demo --query 'Stacks[0].Outputs' --region us-east-1
 ```
 
-On later changes regenerate `template.json`, then use `update-stack` with the same parameters and `CAPABILITY_IAM`. Wait for `stack-update-complete`. Keep the operator key unchanged unless deliberately rotating it. `MailMode=ses` performs real sends; `preview` does not. `AiMode=bedrock` calls `amazon.nova-micro-v1:0`; `rehearsal` matches only four fixture phrases and is explicitly labeled. There is no silent AI fallback.
+On later changes regenerate `template.json`, then use `update-stack` with the same parameters and `CAPABILITY_IAM`. Wait for `stack-update-complete`. Keep the operator key unchanged unless deliberately rotating it. `MailMode=ses` performs real sends; `preview` does not. `AiMode=openai` uses GPT-4.1 mini and an AWS Secrets Manager dynamic reference; `bedrock` calls `amazon.nova-micro-v1:0`; `rehearsal` matches only four fixture phrases and is explicitly labeled. There is no silent AI fallback.
 
-Check `/api/health` after deployment. Create a fresh offer, follow the email, change a preference, confirm, inspect the ledger and mail message IDs, then repeat confirmation to prove idempotency. After successful Bedrock activation, test multi-turn constraints, ambiguity and adversarial text as well as the happy path.
+Check `/api/health` after deployment. Create a fresh offer, follow the email, change a preference, confirm, inspect the ledger and mail message IDs, then repeat confirmation to prove idempotency. Live OpenAI tests cover historical constraints and impossible windows; prompt-injection robustness still needs broader evaluation.
 
 ## Architecture and boundaries
 

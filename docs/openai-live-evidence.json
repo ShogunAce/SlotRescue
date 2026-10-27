@@ -1,0 +1,117 @@
+{
+  "health": {
+    "app": "SlotRescue",
+    "ai": "openai",
+    "mail": "ses",
+    "booking": "demo ledger"
+  },
+  "case_id": "07cfc4254cb0df55",
+  "checks": [
+    {
+      "name": "Add earlier constraint",
+      "expected": "B",
+      "actual": "B",
+      "proposal": {
+        "slot_id": "B",
+        "reason": "Slot B starts after noon and finishes by 3 PM, meeting all constraints.",
+        "engine": "openai",
+        "inference": {
+          "provider": "openai",
+          "model": "gpt-4.1-mini-2025-04-14",
+          "request_id": "chatcmpl-EddEiwcigIpbmlAlgSzF0WGwnL3Vp",
+          "usage": {
+            "prompt_tokens": 336,
+            "completion_tokens": 25,
+            "total_tokens": 361,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "Impossible window",
+      "expected": null,
+      "actual": null,
+      "proposal": {
+        "slot_id": null,
+        "reason": "No available slots finish before 8 AM; earliest slot starts at 9 AM.",
+        "engine": "openai",
+        "inference": {
+          "provider": "openai",
+          "model": "gpt-4.1-mini-2025-04-14",
+          "request_id": "chatcmpl-EddEkDqoSOWW6MFskPjEy6ztr3QVM",
+          "usage": {
+            "prompt_tokens": 350,
+            "completion_tokens": 26,
+            "total_tokens": 376,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          }
+        }
+      },
+      "passed": true
+    },
+    {
+      "name": "Restore valid window",
+      "expected": "B",
+      "actual": "B",
+      "proposal": {
+        "slot_id": "B",
+        "reason": "Customer replaced earlier constraints with start after noon and finish by 3 PM; slot B (13-15) fits these constraints.",
+        "engine": "openai",
+        "inference": {
+          "provider": "openai",
+          "model": "gpt-4.1-mini-2025-04-14",
+          "request_id": "chatcmpl-EddEluKR7XukdMMwhvJEWbdz7xD3e",
+          "usage": {
+            "prompt_tokens": 366,
+            "completion_tokens": 35,
+            "total_tokens": 401,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          }
+        }
+      },
+      "passed": true
+    }
+  ],
+  "live_provider": "openai",
+  "status": "BOOKED",
+  "mail": {
+    "Appointment offer": {
+      "status": "ACCEPTED_BY_SES",
+      "message_id": "010001a17df136c0-934e9d62-c50f-446d-ad2a-86a4a4d88ad3-000000"
+    },
+    "Booking confirmation": {
+      "status": "ACCEPTED_BY_SES",
+      "message_id": "010001a17df14ef4-41057119-e798-46bb-accc-98f030b0ac41-000000"
+    }
+  },
+  "duplicate_event_count_unchanged": true
+}

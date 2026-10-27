@@ -1,5 +1,7 @@
 # OpenAI replacement for blocked Bedrock
 
+**Activated and live-tested October 27, 2026.** The deployment uses openai/ses. See openai-live-evidence.json for real model request IDs, tokens, correct scheduling results, booking status, duplicate protection and SES acceptance IDs. Setup steps below are for reproducing the deployment.
+
 The hackathon requires an AI solution deployed on AWS using a qualifying AWS CDS service. Bedrock/AgentCore is recommended, not required. SlotRescue keeps Lambda, API Gateway, DynamoDB and SES, and adds GPT-4.1 mini for scheduling proposals.
 
 ## Secret setup

@@ -7,7 +7,7 @@
 - [x] SES v2 actually called at runtime; offer and confirmation acceptance IDs saved.
 - [x] Real demo ledger booking and duplicate protection tested.
 - [x] Architecture and setup instructions.
-- [ ] Live AI inference enabled and tested. OpenAI replacement implemented; key setup and live test pending. Bedrock is account-blocked.
+- [x] Live OpenAI inference deployed and tested with historical constraints, impossible windows and the full SES booking loop. Evidence: openai-live-evidence.json.
 - [ ] Partner organization/profile and corporate registration details verified.
 - [x] Corrected ACE opportunity created and verified: O30450854 (Pending Submission).
 - [x] Required hackathon campaign and USD 5/month estimate verified on the new ACE record. See ACE-STATUS.md.
@@ -31,7 +31,7 @@ Partner profile check (October 27): the Partner Central Account API returns an A
 
 **What it does:** An operator opens a conversation with a waiting customer. Amazon SES sends a private scheduling link. The customer revises their constraints, reviews a proposed window, and explicitly confirms. SlotRescue atomically claims the available demo appointment and sends an SES confirmation. An audit trail distinguishes a proposal, booking, email preview, SES acceptance and uncertain send outcome.
 
-**How it is built:** Python Lambda behind API Gateway, DynamoDB conditional writes, SES v2 SendEmail, and an optional Amazon Bedrock Converse planner. The current deployment uses a labeled rehearsal planner while account model access is resolved; do not omit this qualification until successful live inference is recorded.
+**How it is built:** Python Lambda behind API Gateway, DynamoDB conditional writes, SES v2 SendEmail, and OpenAI GPT-4.1 mini with structured scheduling output. The API key is supplied through an AWS Secrets Manager dynamic reference. Real model requests, slot selection, booking and SES acceptance are recorded in the live evidence. Bedrock is retained as an optional adapter but is blocked in this account.
 
 **Impact:** The demo measures confirmed recoveries and conversation-to-booking conversion. Future pilots can measure dispatcher time and cancellation fill rates. No measured customer revenue gain is claimed.
 
@@ -45,7 +45,7 @@ Partner profile check (October 27): the Partner Central Account API returns an A
 
 0:20–0:55 — Create an offer in the deployed operator UI. Show the SES acceptance event and the actual received offer in the approved inbox. Hide operator key and unrelated email.
 
-0:55–1:35 — Open the customer's private link. Change the constraint. Show live Bedrock interpretation only if enabled and verified; otherwise explicitly identify rehearsal and do not submit it as completed AI.
+0:55–1:35 — Open the customer's private link. Change the constraint. Show live OpenAI interpretation, a useful clarification or impossible-window refusal, and the model request ID in the evidence.
 
 1:35–2:05 — Review the exact time window, click Confirm, and show the ledger transition. Refresh or repeat the request to demonstrate no double booking.
 
@@ -59,7 +59,7 @@ Partner project title: SlotRescue — conversational service appointment recover
 
 Business problem: Service operators lose capacity to cancelled appointments and manual waiting-list outreach. This new hackathon concept explores an AWS-based offering that uses email and conversational scheduling to recover available appointment windows.
 
-Solution: AWS Lambda/API Gateway application with DynamoDB booking state, SES customer offers and confirmations, and a Bedrock scheduling planner pending account enablement. Initial implementation is a controlled demonstration, not a signed customer deployment.
+Solution: AWS Lambda/API Gateway application with DynamoDB booking state, SES customer offers and confirmations, and a verified OpenAI structured scheduling planner. Initial implementation is a controlled internal demonstration, not a signed external customer deployment.
 
 Campaign: AWS CDS Agentic AI Hackathon -Sept. 2026
 

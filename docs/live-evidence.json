@@ -1,0 +1,17 @@
+{
+  "status": "BOOKED",
+  "testedAt": "2026-10-27T06:31:24.4513299Z",
+  "mail": {
+    "Appointment offer": {
+      "status": "ACCEPTED_BY_SES",
+      "message_id": "010001a17c0e210b-17c1f05a-8ef1-483f-93a8-5bf32681b070-000000"
+    },
+    "Booking confirmation": {
+      "status": "ACCEPTED_BY_SES",
+      "message_id": "010001a17c0e6ce8-1edf0b8a-8419-40a9-89f8-159a49b0365c-000000"
+    }
+  },
+  "caseId": "9ccf47e437360ab5",
+  "duplicateEventCountUnchanged": true,
+  "slot": "C"
+}

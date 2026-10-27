@@ -1,0 +1,7 @@
+[
+  {"ParameterKey":"OperatorKey","ParameterValue":"REPLACE_WITH_RANDOM_SECRET_AT_LEAST_24_CHARACTERS"},
+  {"ParameterKey":"Sender","ParameterValue":"verified-sender@example.com"},
+  {"ParameterKey":"Recipient","ParameterValue":"verified-recipient@example.com"},
+  {"ParameterKey":"MailMode","ParameterValue":"ses"},
+  {"ParameterKey":"AiMode","ParameterValue":"rehearsal"}
+]

@@ -11,7 +11,7 @@
 - [ ] Partner organization/profile and corporate registration details verified.
 - [x] Corrected ACE opportunity created and verified: O30450854 (Pending Submission).
 - [x] Required hackathon campaign and USD 5/month estimate verified on the new ACE record. See ACE-STATUS.md.
-- [ ] GitHub/GitLab repository published, with judge access.
+- [x] Public GitHub repository published: https://github.com/ShogunAce/SlotRescue (MIT licensed; no private judge access grant needed).
 - [ ] Approximately three-minute real demo footage uploaded publicly to YouTube/Vimeo.
 - [ ] Final Devpost submission checked and submitted before deadline.
 

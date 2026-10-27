@@ -4,6 +4,8 @@ Recover cancelled appliance-service appointments through a conversation: SES ema
 
 **Live demo:** https://tidx9k8p3g.execute-api.us-east-1.amazonaws.com/
 
+**Public source:** https://github.com/ShogunAce/SlotRescue
+
 ## Verified status
 
 - Deployed on AWS, `us-east-1`, stack `slotrescue-demo`.
@@ -11,7 +13,7 @@ Recover cancelled appliance-service appointments through a conversation: SES ema
 - Twenty-two local workflow and AI/AWS adapter contract tests pass; JavaScript syntax checked; deployed page visually inspected. Adapter tests use fake responses and do not prove live model inference.
 - **Live AI verified:** OpenAI GPT-4.1 mini is active on the deployed AWS application. Real inference preserved prior constraints, declined an impossible window, and selected the correct slot after a changed preference. The complete loop booked the slot and obtained SES acceptance IDs for both emails. See [live AI evidence](docs/openai-live-evidence.json). Bedrock remains an optional, account-blocked adapter.
 - Booking changes a demo service ledger, not an external dispatch system. Customer replies arrive through the secure web page, not inbound email.
-- Corrected ACE opportunity O30450854 is created with the required campaign and a verified USD 5/month estimate. Its review status is Pending Submission. Partner eligibility details, published repository, and public demo video remain submission gates; see [submission checklist](docs/SUBMISSION.md).
+- Corrected ACE opportunity O30450854 is created with the required campaign and a verified USD 5/month estimate. Its review status is Pending Submission. Partner eligibility details and the public demo video remain submission gates; see [submission checklist](docs/SUBMISSION.md).
 
 ## Run locally (zero AWS calls)
 

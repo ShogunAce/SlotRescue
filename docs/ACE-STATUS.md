@@ -1,5 +1,24 @@
 # ACE verification — October 27, 2026
 
+## Current hackathon record
+
+Use **O30450854** for the hackathon. Created October 27, 2026 at 15:02:22 UTC (8:02:22 AM PDT), at the user's explicit request for a new opportunity after the previous record became locked.
+
+Verified by GetOpportunity after creation:
+
+- Title: SlotRescue — AWS CDS hackathon internal pilot
+- Customer: Try AI Strategies, internal pilot
+- Campaign: `AWS CDS Agentic AI Hackathon -Sept. 2026`
+- Expected AWS spend: USD 5 per month (planning estimate only)
+- Stage: Prospect
+- Target close date: November 11, 2026
+- Review status: Pending Submission (created, not submitted for AWS review)
+- Comments identify this as the corrected record for the same internal pilot, replacing locked O30427665 for hackathon tracking, not a second customer deal.
+
+The prior opportunity remains unchanged. The historical correction request below has not been sent and is no longer needed to obtain a correctly tagged created opportunity. The official FAQ requires at least Created status for the competition; AWS review submission is a separate process.
+
+## Historical record and failed correction attempt
+
 Opportunity ID: **O30427665**
 
 Title: SlotRescue — internal pilot for conversational appointment recovery

@@ -11,7 +11,7 @@ Recover cancelled appliance-service appointments through a conversation: SES ema
 - Ten local workflow/failure tests pass; JavaScript syntax checked; deployed page visually inspected.
 - **AI is currently rehearsal mode.** A real Bedrock Converse probe failed with `Error 002: Access to Bedrock models is not allowed for this account`. No successful model inference is claimed. The Bedrock adapter is implemented but must be enabled and tested before describing this as a functioning AI submission.
 - Booking changes a demo service ledger, not an external dispatch system. Customer replies arrive through the secure web page, not inbound email.
-- ACE opportunity O30427665 exists, but its required campaign still needs correction/verification. Partner eligibility details, published repository, and public demo video remain submission gates; see [submission checklist](docs/SUBMISSION.md).
+- Corrected ACE opportunity O30450854 is created with the required campaign and a verified USD 5/month estimate. Its review status is Pending Submission. Partner eligibility details, published repository, and public demo video remain submission gates; see [submission checklist](docs/SUBMISSION.md).
 
 ## Run locally (zero AWS calls)
 

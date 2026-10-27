@@ -9,8 +9,8 @@
 - [x] Architecture and setup instructions.
 - [ ] Bedrock live inference enabled and tested (currently account-blocked).
 - [ ] Partner organization/profile and corporate registration details verified.
-- [x] New ACE opportunity ID verified: O30427665 (pending AWS approval).
-- [ ] Required hackathon campaign verified on ACE record; currently absent from returned data. See ACE-STATUS.md.
+- [x] Corrected ACE opportunity created and verified: O30450854 (Pending Submission).
+- [x] Required hackathon campaign and USD 5/month estimate verified on the new ACE record. See ACE-STATUS.md.
 - [ ] GitHub/GitLab repository published, with judge access.
 - [ ] Approximately three-minute real demo footage uploaded publicly to YouTube/Vimeo.
 - [ ] Final Devpost submission checked and submitted before deadline.

@@ -7,7 +7,7 @@
 - [x] SES v2 actually called at runtime; offer and confirmation acceptance IDs saved.
 - [x] Real demo ledger booking and duplicate protection tested.
 - [x] Architecture and setup instructions.
-- [ ] Bedrock live inference enabled and tested (currently account-blocked).
+- [ ] Live AI inference enabled and tested. OpenAI replacement implemented; key setup and live test pending. Bedrock is account-blocked.
 - [ ] Partner organization/profile and corporate registration details verified.
 - [x] Corrected ACE opportunity created and verified: O30450854 (Pending Submission).
 - [x] Required hackathon campaign and USD 5/month estimate verified on the new ACE record. See ACE-STATUS.md.

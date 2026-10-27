@@ -8,8 +8,8 @@ Recover cancelled appliance-service appointments through a conversation: SES ema
 
 - Deployed on AWS, `us-east-1`, stack `slotrescue-demo`.
 - Real SES offer and confirmation accepted by AWS during an end-to-end HTTP test. See [evidence](docs/live-evidence.json). Acceptance is not inbox delivery.
-- Seventeen local workflow and AWS adapter contract tests pass; JavaScript syntax checked; deployed page visually inspected. Adapter tests use fake SDK responses and do not prove live Bedrock inference.
-- **AI is currently rehearsal mode.** A real Bedrock Converse probe failed with `Error 002: Access to Bedrock models is not allowed for this account`. No successful model inference is claimed. The Bedrock adapter is implemented but must be enabled and tested before describing this as a functioning AI submission.
+- Twenty-two local workflow and AI/AWS adapter contract tests pass; JavaScript syntax checked; deployed page visually inspected. Adapter tests use fake responses and do not prove live model inference.
+- **AI is currently rehearsal mode.** Bedrock is account-blocked. An OpenAI GPT-4.1 mini replacement is implemented and tested with mock responses, pending the owner saving the API key and a live deployment test. See [OpenAI activation](docs/OPENAI-SETUP.md). No successful model inference is claimed yet.
 - Booking changes a demo service ledger, not an external dispatch system. Customer replies arrive through the secure web page, not inbound email.
 - Corrected ACE opportunity O30450854 is created with the required campaign and a verified USD 5/month estimate. Its review status is Pending Submission. Partner eligibility details, published repository, and public demo video remain submission gates; see [submission checklist](docs/SUBMISSION.md).
 

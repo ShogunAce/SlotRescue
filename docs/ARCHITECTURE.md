@@ -5,7 +5,7 @@ flowchart LR
  O[Operator + private key] --> API[API Gateway HTTP API]
  API --> L[Lambda: validate, plan, confirm]
  L --> D[(DynamoDB: cases + inventory + audit)]
- L --> B[Bedrock Converse: optional live planner]
+ L --> B[OpenAI structured scheduling planner]
  L --> S[SES v2 SendEmail]
  S --> E[Customer inbox]
  E --> W[Private web link]

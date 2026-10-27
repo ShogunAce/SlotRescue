@@ -19,6 +19,8 @@ Deadline: October 28, 2026, 1 PM PDT. Official rules require an eligible AWS Par
 
 Sources: https://aws-cds-partner.devpost.com/rules and https://aws-cds-partner.devpost.com/details/faq
 
+Partner profile check (October 27): the Partner Central Account API returns an AWS catalog partner record created October 1, 2026, with legal name Cole Slay and primary solution type CONSULTING_SERVICES. The console/account display name is Try AI Strategies. Corporate contact supplied by the user is cole@tryaistrategies.com. The returned profile has no training/certification email domains. A training-domain list is not proof of the hackathon registration's corporate-email linkage; confirm the Devpost organization field matches the actual partner registration and that required APN terms/authority are satisfied.
+
 ## Project fields (draft; update after live AI verification)
 
 **Name:** SlotRescue

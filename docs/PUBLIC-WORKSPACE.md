@@ -36,7 +36,7 @@ The panel under the email previews explains each proposal in plain language:
 
 ## Static assets
 
-The build uses local, same-origin assets from a private encrypted S3 bucket through an allowlisted Lambda `/assets/` route. No signed generation URL is embedded. Upload the four files in `assets/` after stack creation; see README. The CloudFormation inline source is losslessly compressed to remain below the inline template size limit; the readable source remains `app.py` and `index.html`.
+The build uses local, same-origin assets from a private encrypted S3 bucket through an allowlisted Lambda `/assets/` route. No signed generation URL is embedded. Upload the files in `assets/` after stack creation; see README. The CloudFormation inline source is losslessly compressed to remain below the inline template size limit; the readable source remains `app.py` and `index.html`.
 
 The site is responsive and honors reduced motion. Public preview content and AI output are escaped before rendering. The ordinary operator/customer UI shares the updated typography and visual system.
 

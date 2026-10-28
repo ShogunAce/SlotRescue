@@ -7,3 +7,4 @@
 The generated image is reused in the hero and a cropped heading inset to avoid additional generation spend. There are no invented customer testimonials, partner endorsements, or measured business-impact statistics on the landing page.
 
 - `kitchen-v2.png`: replacement full-resolution hero generated October 28, 2026 through ElevenLabs Creative Studio using `gemini-3-pro-image`, generation `E9TsslD5PtiiwT0l3tU8`. Appliance-focused composition; replaces the empty-wall hero. Original downloaded master (1376 × 768), not a thumbnail.
+- `hero-loop.mp4`: 6-second silent loop animating `kitchen-v2.png`, generated October 28, 2026 through ElevenLabs Creative Studio using `bytedance-seedance-v2.5-us` (generation `9NxprCMwtMTcE1d3xJst`), re-encoded to H.264 with ffmpeg.

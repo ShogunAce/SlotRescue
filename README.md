@@ -58,6 +58,7 @@ aws s3 cp assets/kitchen-v2.png "s3://$assetBucket/kitchen-v2.png" --content-typ
 aws s3 cp assets/satoshi.woff2 "s3://$assetBucket/satoshi.woff2" --content-type font/woff2
 aws s3 cp assets/gsap.min.js "s3://$assetBucket/gsap.min.js" --content-type text/javascript
 aws s3 cp assets/ScrollTrigger.min.js "s3://$assetBucket/ScrollTrigger.min.js" --content-type text/javascript
+aws s3 cp assets/hero-loop.mp4 "s3://$assetBucket/hero-loop.mp4" --content-type video/mp4
 ```
 
 On later changes regenerate `template.json`, then use `update-stack` with the same parameters and `CAPABILITY_IAM`. Wait for `stack-update-complete`. Keep the operator key unchanged unless deliberately rotating it. `MailMode=ses` performs real sends; `preview` does not. `AiMode=openai` uses GPT-4.1 mini and an AWS Secrets Manager dynamic reference; `bedrock` calls `amazon.nova-micro-v1:0`; `rehearsal` matches only four fixture phrases and is explicitly labeled. There is no silent AI fallback.

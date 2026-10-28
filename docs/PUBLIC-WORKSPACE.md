@@ -6,12 +6,23 @@ The homepage describes the implemented product. `/workspace` opens without an ac
 
 1. Open `/workspace` and start with a morning preference.
 2. Change to an afternoon that finishes by 3 PM: expect B, 1–3 PM.
-3. Add “the entire appointment must finish before 8 AM”: expect clarification, not a confirm button.
+3. Add “the entire appointment must finish before 8 AM”: expect “No matching window yet” and no confirm button.
 4. Explicitly replace previous constraints with an afternoon ending by 3 PM.
 5. Confirm. The isolated ledger claims B and produces a confirmation **preview**.
 6. Start a fresh workspace to try again. No other visitor’s inventory is changed.
 
 This runs the same planner and booking service as the operator path. Public email steps always bypass SES and return `PREVIEW_ONLY`, even when the deployment uses `MAIL_MODE=ses`. The user-facing UI labels this distinction. The public workspace does not collect an email address.
+
+## The AI decision panel
+
+The panel under the email previews explains each proposal in plain language:
+
+- A recommendation card with the chosen window, or “No matching window yet” when nothing fits.
+- The AI’s reason, then three steps: what you said, what was checked, and whose move it is. Nothing is reserved until you confirm.
+- “Windows considered” lists each window’s factual state (selected, open, or already booked). It does not invent per-window reasoning the model did not return.
+- “How the recommendation changed” appears once a proposal has been replanned.
+- “Technical details” shows decision engine, model version, request ID (with a Copy button), token usage and conversation version. Raw JSON is under “View raw JSON (for developers)”.
+- A “Start a fresh workspace” button resets the session without scrolling back up.
 
 ## Isolation and cost controls
 

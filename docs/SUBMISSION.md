@@ -21,7 +21,7 @@ Sources: https://aws-cds-partner.devpost.com/rules and https://aws-cds-partner.d
 
 Partner profile check (October 27): the Partner Central Account API returns an AWS catalog partner record created October 1, 2026, with legal name Cole Slay and primary solution type CONSULTING_SERVICES. The console/account display name is Try AI Strategies. Corporate contact supplied by the user is cole@tryaistrategies.com. The returned profile has no training/certification email domains. A training-domain list is not proof of the hackathon registration's corporate-email linkage; confirm the Devpost organization field matches the actual partner registration and that required APN terms/authority are satisfied.
 
-## Project fields (draft; update after live AI verification)
+## Project fields
 
 **Name:** SlotRescue
 
@@ -35,7 +35,9 @@ Partner profile check (October 27): the Partner Central Account API returns an A
 
 **Impact:** The demo measures confirmed recoveries and conversation-to-booking conversion. Future pilots can measure dispatcher time and cancellation fill rates. No measured customer revenue gain is claimed.
 
-**Limitations:** Three demo slots; one test email recipient; no actual technician dispatch; no inbound email parsing; no confirmed inbox-delivery events; shared operator secret; single bounded database aggregate. No WhatsApp prize claim.
+**Judge access:** The landing page links to `/workspace`, a no-sign-in live AI experience with isolated inventory, reset, and explicitly labeled email previews. The protected operator path demonstrates real SES sending.
+
+**Limitations:** Three demo slots per public session; one test email recipient; no actual technician dispatch; no inbound email parsing; no confirmed inbox-delivery events; shared operator secret; single bounded database aggregate. No WhatsApp prize claim.
 
 **Disclosure:** Built during the hackathon window with AI coding assistance. No pre-existing product source incorporated. Uses Python standard library and the AWS SDK.
 

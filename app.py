@@ -30,7 +30,10 @@ def initial():
 
 class Store:
     """One bounded demo aggregate; CAS makes slot claims atomic across invocations."""
-    def __init__(self):
+    def __init__(self, key='demo'):
+        self.key = key
+        self.sql_table = 'state' if key == 'demo' else 'public_state'
+        self.sql_key = 1 if key == 'demo' else key
         self.table = os.getenv('TABLE_NAME')
         if self.table:
             import boto3
@@ -39,13 +42,14 @@ class Store:
             self.path = os.getenv('DB_PATH', 'slotrescue.db')
             with closing(sqlite3.connect(self.path)) as con, con:
                 con.execute('CREATE TABLE IF NOT EXISTS state (id INTEGER PRIMARY KEY, revision INTEGER, data TEXT)')
+                con.execute('CREATE TABLE IF NOT EXISTS public_state (id TEXT PRIMARY KEY, revision INTEGER, data TEXT)')
 
     def read(self):
         if self.table:
-            item = self.db.get_item(Key={'id': 'demo'}, ConsistentRead=True).get('Item')
+            item = self.db.get_item(Key={'id': self.key}, ConsistentRead=True).get('Item')
             return json.loads(item['data']) if item else initial()
         with closing(sqlite3.connect(self.path)) as con:
-            row = con.execute('SELECT data FROM state WHERE id=1').fetchone()
+            row = con.execute('SELECT data FROM ' + self.sql_table + ' WHERE id=?', (self.sql_key,)).fetchone()
         return json.loads(row[0]) if row else initial()
 
     def save(self, state, revision):
@@ -55,7 +59,10 @@ class Store:
             raise Problem(409, 'Demo storage limit reached. Archive before continuing.')
         if self.table:
             try:
-                self.db.put_item(Item={'id': 'demo', 'revision': revision + 1, 'data': data},
+                item = {'id': self.key, 'revision': revision + 1, 'data': data}
+                if self.key != 'demo':
+                    item['expires_at'] = int(time.time()) + 604800
+                self.db.put_item(Item=item,
                     ConditionExpression='attribute_not_exists(id) OR revision = :r',
                     ExpressionAttributeValues={':r': revision})
             except self.db.meta.client.exceptions.ConditionalCheckFailedException:
@@ -63,10 +70,10 @@ class Store:
         else:
             with closing(sqlite3.connect(self.path)) as con, con:
                 con.execute('BEGIN IMMEDIATE')
-                row = con.execute('SELECT revision FROM state WHERE id=1').fetchone()
+                row = con.execute('SELECT revision FROM ' + self.sql_table + ' WHERE id=?', (self.sql_key,)).fetchone()
                 if row and row[0] != revision:
                     raise Problem(409, 'State changed. Refresh and try again.')
-                con.execute('INSERT OR REPLACE INTO state VALUES (1, ?, ?)', (revision + 1, data))
+                con.execute('INSERT OR REPLACE INTO ' + self.sql_table + ' VALUES (?, ?, ?)', (self.sql_key, revision + 1, data))
 
 
 def event(case, kind, detail):
@@ -173,8 +180,14 @@ def mail(recipient, subject, body):
 
 
 class Service:
-    def __init__(self, store=None):
+    def __init__(self, store=None, public_demo=False):
         self.store = store or Store()
+        self.public_demo = public_demo
+
+    def propose(self, text, slots, history):
+        if self.public_demo:
+            consume_budget('inference', 150)
+        return plan(text, slots, history)
 
     def case(self, state, cid, token):
         c = state['cases'].get(cid)
@@ -199,7 +212,8 @@ class Service:
         event(c, 'mail_intent', category)
         self.store.save(state, state['revision'])
         try:
-            receipt = mail(c['email'], 'SlotRescue · ' + category, body)
+            receipt = ({'status': 'PREVIEW_ONLY', 'body': body} if self.public_demo
+                       else mail(c['email'], 'SlotRescue · ' + category, body))
         except Exception:
             receipt = {'status': 'FAILED_OR_UNKNOWN', 'detail': 'No automatic retry. Check SES before an operator resends.'}
         for attempt in range(4):
@@ -228,10 +242,10 @@ class Service:
         email = str(data.get('email', '')).strip().lower()
         if not re.fullmatch(r'[^\s@]+@[^\s@]+\.[^\s@]+', email) or len(email) > 254:
             raise Problem(400, 'Enter a valid email address.')
-        if os.getenv('MAIL_MODE') == 'ses' and email != os.getenv('TEST_RECIPIENT', '').lower():
+        if not self.public_demo and os.getenv('MAIL_MODE') == 'ses' and email != os.getenv('TEST_RECIPIENT', '').lower():
             raise Problem(403, 'Use the configured test recipient.')
         text = validate_text(data.get('message'))
-        proposal = plan(text, state['slots'], [])
+        proposal = self.propose(text, state['slots'], [])
         cid, token = secrets.token_hex(8), secrets.token_urlsafe(32)
         c = {'id': cid, 'request_id': req, 'email': email, 'token_hash': hashlib.sha256(token.encode()).hexdigest(),
              'expires': int(time.time()) + 172800, 'status': 'OFFERED' if proposal['slot_id'] else 'NEEDS_INPUT',
@@ -254,7 +268,7 @@ class Service:
         if len(c['messages']) >= 8:
             raise Problem(409, 'Conversation limit reached. Contact the operator.')
         text = validate_text(data.get('message'))
-        c['proposal'] = plan(text, state['slots'], c['messages'])
+        c['proposal'] = self.propose(text, state['slots'], c['messages'])
         c['messages'].append(text)
         c['version'] += 1
         c['status'] = 'OFFERED' if c['proposal']['slot_id'] else 'NEEDS_INPUT'
@@ -282,6 +296,59 @@ class Service:
         return self.public(state['cases'][cid], state['slots'])
 
 
+def consume_budget(kind, limit):
+    """Reserve before external work; a failed call still spends its reservation."""
+    day = dt.datetime.now(dt.timezone.utc).date().isoformat()
+    store = Store('budget:' + day)
+    for attempt in range(5):
+        state = store.read()
+        count = state.get(kind, 0)
+        if count >= limit:
+            raise Problem(429, 'Today\u2019s public demo allowance is used. Please return tomorrow; the operator demo is separate.')
+        state[kind] = count + 1
+        try:
+            store.save(state, state['revision'])
+            return
+        except Problem as exc:
+            if exc.status != 409:
+                raise
+    raise Problem(429, 'The demo is busy. Please try again in a moment.')
+
+
+def demo_token():
+    payload = secrets.token_hex(16) + '.' + str(int(time.time()) + 86400)
+    key = os.environ.get('OPERATOR_KEY', '')
+    if not key:
+        raise Problem(503, 'Demo is not configured.')
+    return payload + '.' + hmac.new(key.encode(), payload.encode(), hashlib.sha256).hexdigest()
+
+
+def demo_service(token):
+    if not re.fullmatch(r'[a-f0-9]{32}\.[0-9]{10}\.[a-f0-9]{64}', token):
+        raise Problem(401, 'Start a fresh workspace to continue.')
+    payload, signature = token.rsplit('.', 1)
+    expected = hmac.new(os.environ.get('OPERATOR_KEY', '').encode(), payload.encode(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(signature, expected) or int(payload.split('.')[1]) < time.time():
+        raise Problem(401, 'This workspace expired. Start a fresh workspace.')
+    return Service(Store('judge:' + payload.split('.')[0]), public_demo=True)
+
+
+def asset_response(name):
+    allowed = {'kitchen.webp': 'image/webp', 'satoshi.woff2': 'font/woff2',
+               'gsap.min.js': 'text/javascript', 'ScrollTrigger.min.js': 'text/javascript'}
+    if name not in allowed:
+        raise Problem(404, 'Not found.')
+    bucket = os.getenv('ASSET_BUCKET')
+    if bucket:
+        import boto3
+        content = boto3.client('s3').get_object(Bucket=bucket, Key=name)['Body'].read()
+    else:
+        content = Path(__file__).with_name('assets').joinpath(name).read_bytes()
+    return {'statusCode': 200, 'headers': {'Content-Type': allowed[name],
+        'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff'},
+        'isBase64Encoded': True, 'body': base64.b64encode(content).decode()}
+
+
 def validate_text(value):
     if not isinstance(value, str) or not 1 <= len(value.strip()) <= 500:
         raise Problem(400, 'Enter a scheduling preference of 1–500 characters.')
@@ -300,8 +367,10 @@ def handler(e, context=None):
         path = e.get('rawPath', '/')
         method = e.get('requestContext', {}).get('http', {}).get('method', 'GET')
         headers = {k.lower(): v for k, v in e.get('headers', {}).items()}
-        if path == '/' and method == 'GET':
+        if path in ('/', '/workspace', '/operator') and method == 'GET':
             return response(200, globals().get('PAGE') or Path(__file__).with_name('index.html').read_text(encoding='utf-8'), True)
+        if path.startswith('/assets/') and method == 'GET':
+            return asset_response(path[len('/assets/'):])
         if path == '/api/health' and method == 'GET':
             return response(200, {'app': 'SlotRescue', 'ai': os.getenv('AI_MODE', 'rehearsal'), 'mail': os.getenv('MAIL_MODE', 'preview'), 'booking': 'demo ledger'})
         raw = e.get('body') or '{}'
@@ -315,6 +384,26 @@ def handler(e, context=None):
                 raise ValueError()
         except ValueError:
             raise Problem(400, 'Invalid JSON object.')
+        if path == '/api/demo/start' and method == 'POST':
+            text = validate_text(data.get('message', 'A morning appointment, please.'))
+            consume_budget('sessions', 80)
+            session = demo_token()
+            demo = demo_service(session)
+            created = demo.create({'request_id': secrets.token_hex(12), 'email': 'guest@example.com', 'message': text}, 'https://demo.invalid')
+            customer_token = created['customer_url'].split('&token=')[1]
+            return response(201, {'session': session, 'token': customer_token, 'case': created['case']})
+        match_demo = re.fullmatch(r'/api/demo/([0-9a-f]{16})(?:/(reply|confirm))?', path)
+        if match_demo:
+            demo = demo_service(headers.get('x-demo-session', ''))
+            cid, action = match_demo.groups()
+            token = headers.get('x-customer-token', '')
+            if method == 'GET' and not action:
+                state = demo.store.read()
+                return response(200, demo.public(demo.case(state, cid, token), state['slots']))
+            if method == 'POST' and action == 'reply':
+                return response(200, demo.reply(cid, token, data))
+            if method == 'POST' and action == 'confirm':
+                return response(200, demo.confirm(cid, token, data))
         service = Service()
         if path in ('/api/cases', '/api/dashboard'):
             secret = os.getenv('OPERATOR_KEY', '')
@@ -362,7 +451,7 @@ if __name__ == '__main__':
             for k, v in out['headers'].items():
                 self.send_header(k, v)
             self.end_headers()
-            self.wfile.write(out['body'].encode())
+            self.wfile.write(base64.b64decode(out['body']) if out.get('isBase64Encoded') else out['body'].encode())
         do_GET = run_request
         do_POST = run_request
     print('SlotRescue http://localhost:8765 | operator key: local-demo-key (unless overridden)')

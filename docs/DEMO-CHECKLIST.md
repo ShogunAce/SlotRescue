@@ -27,10 +27,10 @@ Source: https://github.com/ShogunAce/SlotRescue
 | Preserve constraints | Send `It also needs to start after noon.` | Still 1–3 PM; earlier finish-by-3 constraint preserved |
 | Impossible request | Send `I also need the entire appointment to finish before 8 AM.` | No valid window; useful explanation; no Confirm button |
 | Recover | Send `Replace all previous time constraints: a 1–3 PM appointment works for me.` | 1–3 PM proposal and Confirm button return |
-| Explicit confirmation | Click “Confirm this appointment” once | Confirmed in your demo ledger; chosen slot marked confirmed; reply form hidden |
-| Email evidence | Expand Appointment offer and Booking confirmation | Both explicitly say preview only; no claim that email was sent |
-| AI evidence | Expand “Inspect the result” | BOOKED; engine openai; model/request ID; PREVIEW_ONLY mail statuses |
-| Persistence | Refresh, or go to homepage and return in the same tab | Same confirmed case returns; no extra booking |
+| Explicit confirmation | Click “Confirm this appointment” once | Confirmation popup opens. Click View my appointment: focus moves to the appointment card with date, time, zone and booking reference; reply form hidden |
+| Email evidence | Read the visible Appointment offer and Booking confirmation previews | Both explicitly say preview only; no claim that email was sent |
+| AI evidence | Read The AI decision, then expand “Technical details” (raw JSON is under “View raw JSON”) | BOOKED; engine openai; model/request ID; PREVIEW_ONLY mail statuses |
+| Persistence | Refresh, or go to homepage and return in the same tab | Same confirmed card returns with “Restored from the server.” Click Verify saved appointment for a fresh server read; no extra booking |
 | Restart | Click “Start a fresh workspace,” then Start | Fresh case and all three windows available again |
 | Independence | Open an incognito window and start another session | Separate schedule; no other visitor's conversation visible |
 

@@ -28,3 +28,7 @@ This runs the same planner and booking service as the operator path. Public emai
 The build uses local, same-origin assets from a private encrypted S3 bucket through an allowlisted Lambda `/assets/` route. No signed generation URL is embedded. Upload the four files in `assets/` after stack creation; see README. The CloudFormation inline source is losslessly compressed to remain below the inline template size limit; the readable source remains `app.py` and `index.html`.
 
 The site is responsive and honors reduced motion. Public preview content and AI output are escaped before rendering. The ordinary operator/customer UI shares the updated typography and visual system.
+
+## Confirmation experience
+
+A successful confirmation opens an accessible modal only after the server returns BOOKED. View my appointment (or Escape) closes it and focuses the appointment card. The card shows the window, date, Pacific time zone, reference and saved state. Email previews and a readable AI explanation remain visible, while the original recovery timeline stays in place. Verify saved appointment performs a fresh server read; refreshing the tab restores the booking with an explicit restoration message. The workspace header omits its redundant Try the workspace link.

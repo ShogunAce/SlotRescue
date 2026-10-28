@@ -334,7 +334,7 @@ def demo_service(token):
 
 
 def asset_response(name):
-    allowed = {'kitchen.webp': 'image/webp', 'satoshi.woff2': 'font/woff2',
+    allowed = {'kitchen.webp': 'image/webp', 'kitchen-v2.png': 'image/png', 'satoshi.woff2': 'font/woff2',
                'gsap.min.js': 'text/javascript', 'ScrollTrigger.min.js': 'text/javascript'}
     if name not in allowed:
         raise Problem(404, 'Not found.')

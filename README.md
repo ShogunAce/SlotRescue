@@ -54,7 +54,7 @@ Upload the same-origin assets to the private bucket returned by the stack:
 
 ```powershell
 $assetBucket = aws cloudformation describe-stacks --stack-name slotrescue-demo --query "Stacks[0].Outputs[?OutputKey=='AssetBucket'].OutputValue | [0]" --output text --region us-east-1
-aws s3 cp assets/kitchen.webp "s3://$assetBucket/kitchen.webp" --content-type image/webp
+aws s3 cp assets/kitchen-v2.png "s3://$assetBucket/kitchen-v2.png" --content-type image/png
 aws s3 cp assets/satoshi.woff2 "s3://$assetBucket/satoshi.woff2" --content-type font/woff2
 aws s3 cp assets/gsap.min.js "s3://$assetBucket/gsap.min.js" --content-type text/javascript
 aws s3 cp assets/ScrollTrigger.min.js "s3://$assetBucket/ScrollTrigger.min.js" --content-type text/javascript
@@ -88,3 +88,7 @@ Deleting the stack deletes the logs but retains the demo table and asset bucket.
 ## Original work and license
 
 New project built during the 2026 hackathon window with AI coding assistance. Python standard library, AWS SDK supplied by Lambda, and AWS managed services are used. No previous application code, stock images, or music included. The kitchen image was generated through ElevenLabs; Satoshi and GSAP retain their own licenses. See [asset attribution](assets/ATTRIBUTION.md). Application source is MIT licensed.
+
+## Demo preparation
+
+Use the [manual test and recording checklist](docs/DEMO-CHECKLIST.md) for exact inputs, expected results, public-versus-SES behavior, and the three-minute recording sequence.

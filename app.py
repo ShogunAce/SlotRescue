@@ -333,9 +333,10 @@ def demo_service(token):
     return Service(Store('judge:' + payload.split('.')[0]), public_demo=True)
 
 
-def asset_response(name):
+def asset_response(name, range_header=''):
     allowed = {'kitchen.webp': 'image/webp', 'kitchen-v2.png': 'image/png', 'satoshi.woff2': 'font/woff2',
-               'gsap.min.js': 'text/javascript', 'ScrollTrigger.min.js': 'text/javascript'}
+               'gsap.min.js': 'text/javascript', 'ScrollTrigger.min.js': 'text/javascript',
+               'hero-loop.mp4': 'video/mp4'}
     if name not in allowed:
         raise Problem(404, 'Not found.')
     bucket = os.getenv('ASSET_BUCKET')
@@ -344,9 +345,19 @@ def asset_response(name):
         content = boto3.client('s3').get_object(Bucket=bucket, Key=name)['Body'].read()
     else:
         content = Path(__file__).with_name('assets').joinpath(name).read_bytes()
-    return {'statusCode': 200, 'headers': {'Content-Type': allowed[name],
-        'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff'},
-        'isBase64Encoded': True, 'body': base64.b64encode(content).decode()}
+    headers = {'Content-Type': allowed[name], 'Cache-Control': 'public, max-age=86400', 'X-Content-Type-Options': 'nosniff'}
+    status, total = 200, len(content)
+    if name.endswith('.mp4'):
+        headers['Accept-Ranges'] = 'bytes'
+        m = re.match(r'bytes=(\d*)-(\d*)$', range_header or '')
+        if m and (m.group(1) or m.group(2)):
+            start = int(m.group(1)) if m.group(1) else max(total - int(m.group(2)), 0)
+            end = min(int(m.group(2)) if m.group(1) and m.group(2) else total - 1, total - 1)
+            if start > end:
+                raise Problem(416, 'Range not satisfiable.')
+            content, status = content[start:end + 1], 206
+            headers['Content-Range'] = 'bytes %d-%d/%d' % (start, end, total)
+    return {'statusCode': status, 'headers': headers, 'isBase64Encoded': True, 'body': base64.b64encode(content).decode()}
 
 
 def validate_text(value):
@@ -370,7 +381,7 @@ def handler(e, context=None):
         if path in ('/', '/workspace', '/operator') and method == 'GET':
             return response(200, globals().get('PAGE') or Path(__file__).with_name('index.html').read_text(encoding='utf-8'), True)
         if path.startswith('/assets/') and method == 'GET':
-            return asset_response(path[len('/assets/'):])
+            return asset_response(path[len('/assets/'):], headers.get('range', ''))
         if path == '/api/health' and method == 'GET':
             return response(200, {'app': 'SlotRescue', 'ai': os.getenv('AI_MODE', 'rehearsal'), 'mail': os.getenv('MAIL_MODE', 'preview'), 'booking': 'demo ledger'})
         raw = e.get('body') or '{}'
